@@ -5,14 +5,12 @@
 Which jobs give workers growth in their career?
 
 **Cause:** economic mobility for workers without a college degree.
-
 **Question:** using data on what employees say about their jobs (Glassdoor dataset)  and what employers offer (Indeed dataset), can we predict how much growth a job offers, and do the most accessible jobs offer the least amount of career growth?
 
 **Findings:** yes. Occupations that typically need no degree make up about a third of job postings but average a growth score of ~34/100, versus ~60 for degree jobs. They pay less, show more burnout and offer fewer promotions.
 The share of hourly postings is the strongest warning sign (Spearman ρ ≈ −0.74 with the growth score).
 
-**Solution:**
-**Growth Score**
+**Solution: Growth Score**
 On a scale of 0 to 100 evaluate the potential career growth a job offers using the average of 6 different metrics:
 - Salary 
 - Culture and Diversity ratings 
@@ -106,8 +104,21 @@ and can fill in its fields from pasted posting text.
 * Growth score = mean percentile of 7 components (burnout reversed) × 100; 200 bootstrap resamples give 90% intervals.
 * Random seeds are fixed (`random_state=42`), so reruns give the same numbers on the same data and package versions.
 
-## Limitations and Bias
+## Limitations of the Model:
 * The burnout model is least accurate for part-time workers (ROC-AUC 0.81 vs 0.85), the group most likely to hold no-degree jobs, and it over-predicts their burnout by 2–4 points.
 * Hourly workers write fewer reviews, so their scores rest on fewer voices.
 * The salary model is not worse for low-wage jobs (14% error for the lowest third).
-* The score should help people widen their options, never screen people out.
+
+## Limitations of the Method: 
+* Burnout is measured using work-life balance rating which is subjective. 
+* Predicted pay has 16% error when a posting doesn't list a pay rate. 
+* Companies that have fewer than 10 reviews are judged by ty their occupation's average. 
+* Unusual job titles can be misclassified as they are sorted by keyword rules. 
+
+## Bias:
+* Hourly workers write short Glassdoor reviews which leads to their scores being less certain. 
+* Prediction can be affected based on which states the job posting is posted. States such as CA, NY, WA, CO have pay-transparency which can cause bias. 
+* Hourly pay is assumed to be full time hours which overestimates income for part-time job postings. 
+
+
+
