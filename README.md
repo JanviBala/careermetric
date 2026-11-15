@@ -22,7 +22,7 @@ On a scale of 0 to 100 evaluate the potential career growth a job offers using t
 
 **Where to start**
 * **[data_analysis.ipynb](data_analysis.ipynb)**: Analyzes both datasets, builds 3 different models to show that entry level jobs offer the least growth.
-* **[Try the Growth Score Calculator](https://janvibala.github.io/careermetric/calculator/)**: score any job posting in your browser, with nothing to install (source: `calculator/index.html`).
+* **[Growth Score Calculator](https://janvibala.github.io/careermetric/calculator/)**: the CareerMetric growth score calculator (open it in a browser).
 
 
 ### Headline model results
