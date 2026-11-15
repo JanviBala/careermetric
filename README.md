@@ -4,24 +4,24 @@
 
 Which jobs give workers growth in their career?
 
-**Cause:** economic mobility for workers without a college degree.
-**Question:** using data on what employees say about their jobs (Glassdoor dataset)  and what employers offer (Indeed dataset), can we predict how much growth a job offers, and do the most accessible jobs offer the least amount of career growth?
+**Cause:** Economic mobility for workers without a college degree.
+**Question:** Using data on what employees say about their jobs (Glassdoor dataset) and what employers offer (Indeed dataset),can we predict how much growth a job offers, and do the most accessible jobs offer the least amount of career growth?
 
-**Findings:** yes. Occupations that typically need no degree make up about a third of job postings but average a growth score of ~34/100, versus ~60 for degree jobs. They pay less, show more burnout and offer fewer promotions.
+**Findings:** Yes. Occupations that typically need no degree make up about a third of job postings but average a growth score of ~34/100, versus ~60 for degree jobs. They pay less, show more burnout and offer fewer promotions.
 The share of hourly postings is the strongest warning sign (Spearman ρ ≈ −0.74 with the growth score).
 
 **Solution: Growth Score**
 On a scale of 0 to 100 evaluate the potential career growth a job offers using the average of 6 different metrics:
 - Salary 
 - Culture and Diversity ratings 
-- Job Openings 
+- Market Demand 
 - How likely are you to get promoted 
 - Work-life balance score 
 - Burnout rate (lower = better)
 
 **Where to start**
 * **[data_analysis.ipynb](data_analysis.ipynb)**: Analyzes both datasets, builds 3 different models to show that entry level jobs offer the least growth.
-* **[Growth Score Calculator](https://janvibala.github.io/careermetric/calculator/)**: the CareerMetric growth score calculator (open it in a browser).
+* **[Growth Score Calculator](https://janvibala.github.io/careermetric/calculator/)**: The CareerMetric growth score calculator (open it in a browser).
 
 
 ### Headline model results
