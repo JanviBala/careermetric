@@ -125,11 +125,10 @@ button:disabled{opacity:.55;cursor:progress}
     <div class="byline">By: Dorthy Victor, Emily Kay, and Janvi Balakrishnan</div>
     <hr class="rule">
     <h2>Growth Score Calculator</h2>
-    <p class="lede"><b>Growth Score:</b> on a scale of 0 to 100, it evaluates the potential career growth a job offers using the average of 7 different metrics:</p>
+    <p class="lede"><b>Growth Score:</b> on a scale of 0 to 100, it evaluates the potential career growth a job offers using the average of 6 different metrics:</p>
     <ul class="metrics">
       <li>Salary</li>
       <li>Culture and Diversity ratings</li>
-      <li>Career Opportunities provided</li>
       <li>Job Openings</li>
       <li>How likely you are to get promoted</li>
       <li>Work-life balance score</li>
@@ -263,15 +262,18 @@ const MODEL = {"version":1,"built_from":"glassdoor_reviews.csv + indeed_job_list
 const G = GrowthScorer.create(MODEL);
 const $ = id => document.getElementById(id);
 const LABEL = Object.fromEntries(MODEL.components.map(c => [c[0], c[1]]));
-const W = Object.fromEntries(MODEL.components.map(c => [c[0], 3]));
+// Career opportunities is left out of this calculator: weight 0, not shown
+const DROP = new Set(["career_opportunities"]);
+const COMPS = MODEL.components.filter(([k]) => !DROP.has(k));
+const W = Object.fromEntries(MODEL.components.map(([k]) => [k, DROP.has(k) ? 0 : 3]));
 const EXAMPLE = {job_title: "Data Analyst", company: "Kaiser Permanente", state: "CA", job_type: "Full-time", salary: "",
   description: "Analyze clinical and operational data using SQL, Python and Tableau. Build dashboards and reports for leadership, partner with care teams to improve patient outcomes. Bachelor's degree in statistics, economics or a related field; 2+ years of analytics experience."};
 
 // fill selects
 $("state").innerHTML = MODEL.states.map(s => `<option>${s}</option>`).join("");
 $("job_type").innerHTML = MODEL.job_types.map(s => `<option value="${s}">${s === "unknown" ? "Not listed" : s}</option>`).join("");
-$("weights").innerHTML = MODEL.components.map(([k, l]) => `<div class="f"><label for="w-${k}"><span>${l}</span><output id="wo-${k}">3</output></label><input type="range" id="w-${k}" min="1" max="5" step="1" value="3"></div>`).join("");
-MODEL.components.forEach(([k]) => $("w-" + k).addEventListener("input", e => { W[k] = +e.target.value; $("wo-" + k).textContent = e.target.value; update(); }));
+$("weights").innerHTML = COMPS.map(([k, l]) => `<div class="f"><label for="w-${k}"><span>${l}</span><output id="wo-${k}">3</output></label><input type="range" id="w-${k}" min="1" max="5" step="1" value="3"></div>`).join("");
+COMPS.forEach(([k]) => $("w-" + k).addEventListener("input", e => { W[k] = +e.target.value; $("wo-" + k).textContent = e.target.value; update(); }));
 
 const FIELDS = ["job_title", "company", "state", "job_type", "salary", "description"];
 function read() {
@@ -300,7 +302,7 @@ function update() {
   $("meta").textContent = `Occupation: ${r.occupation || "not recognised, using overall averages"} · ` +
     (r.company_matched ? `Matched Glassdoor company: ${r.company_matched}` : (p.company ? "Company not found in reviews, using occupation averages" : "No company entered"));
   $("co-hint").textContent = p.company ? (r.company_matched ? `✓ ${r.company_matched} found in reviews` : "Not found, occupation average used") : " ";
-  $("comps").innerHTML = MODEL.components.map(([k]) => {
+  $("comps").innerHTML = COMPS.map(([k]) => {
     const v = r.values[k], pc = r.percentiles[k];
     const shown = (fmt[k] || stars)(v);
     return `<div class="comp"><span class="name">${LABEL[k]}</span><span class="v">${shown}</span>
