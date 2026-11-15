@@ -129,7 +129,7 @@ button:disabled{opacity:.55;cursor:progress}
     <ul class="metrics">
       <li>Salary</li>
       <li>Culture and Diversity ratings</li>
-      <li>Job Openings</li>
+      <li>Market Demand</li>
       <li>How likely you are to get promoted</li>
       <li>Work-life balance score</li>
       <li>Burnout rate (lower = better)</li>
@@ -175,6 +175,7 @@ const MODEL = /*__MODEL__*/null;
 const G = GrowthScorer.create(MODEL);
 const $ = id => document.getElementById(id);
 const LABEL = Object.fromEntries(MODEL.components.map(c => [c[0], c[1]]));
+LABEL.job_openings = "Market demand";
 // Career opportunities is left out of this calculator: weight 0, not shown
 const DROP = new Set(["career_opportunities"]);
 const COMPS = MODEL.components.filter(([k]) => !DROP.has(k));
@@ -185,7 +186,7 @@ const EXAMPLE = {job_title: "Data Analyst", company: "Kaiser Permanente", state:
 // fill selects
 $("state").innerHTML = MODEL.states.map(s => `<option>${s}</option>`).join("");
 $("job_type").innerHTML = MODEL.job_types.map(s => `<option value="${s}">${s === "unknown" ? "Not listed" : s}</option>`).join("");
-$("weights").innerHTML = COMPS.map(([k, l]) => `<div class="f"><label for="w-${k}"><span>${l}</span><output id="wo-${k}">3</output></label><input type="range" id="w-${k}" min="1" max="5" step="1" value="3"></div>`).join("");
+$("weights").innerHTML = COMPS.map(([k]) => `<div class="f"><label for="w-${k}"><span>${LABEL[k]}</span><output id="wo-${k}">3</output></label><input type="range" id="w-${k}" min="1" max="5" step="1" value="3"></div>`).join("");
 COMPS.forEach(([k]) => $("w-" + k).addEventListener("input", e => { W[k] = +e.target.value; $("wo-" + k).textContent = e.target.value; update(); }));
 
 const FIELDS = ["job_title", "company", "state", "job_type", "salary", "description"];
