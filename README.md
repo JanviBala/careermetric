@@ -13,10 +13,9 @@ The share of hourly postings is the strongest warning sign (Spearman ρ ≈ −0
 
 **Solution:**
 **Growth Score**
-On a scale of 0 to 100 evaluate the potential career growth a job offers using the average of 7 different metrics:
+On a scale of 0 to 100 evaluate the potential career growth a job offers using the average of 6 different metrics:
 - Salary 
 - Culture and Diversity ratings 
-- Career Opportunities provided 
 - Job Openings 
 - How likely are you to get promoted 
 - Work-life balance score 
