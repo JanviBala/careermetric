@@ -1,0 +1,295 @@
+<meta charset="utf-8">
+<title>Dead-End or Ladder?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,600&display=swap">
+<style>
+/* Layout: single reading column (max 1040px); ranking is the centrepiece with a weight panel beside it on wide screens. */
+:root{
+  --bg:#f7f8f7; --surface:#ffffff; --ink:#15201d; --ink-2:#4b5a55; --muted:#7c8a85; --rule:#dde3e0;
+  --accent:#2a78d6; --accent-soft:#e3eefb; --good:#0a7d3c; --bad:#b4322f; --whisker:#15201d;
+  --display:"Fraunces",Georgia,serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121615; --surface:#1a1f1e; --ink:#eef1ef; --ink-2:#b9c3bf; --muted:#8a9792; --rule:#2c3432;
+  --accent:#3987e5; --accent-soft:#1c2b3d; --good:#3fbf6f; --bad:#ec6a66; --whisker:#eef1ef; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121615; --surface:#1a1f1e; --ink:#eef1ef; --ink-2:#b9c3bf; --muted:#8a9792; --rule:#2c3432;
+  --accent:#3987e5; --accent-soft:#1c2b3d; --good:#3fbf6f; --bad:#ec6a66; --whisker:#eef1ef; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2{font-family:var(--display);font-weight:600;text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(30px,5vw,44px)} h2{font-size:26px} h3{font-size:15px;margin:0 0 8px;font-weight:600}
+p{margin:0;max-width:68ch} .lede{font-size:17px;color:var(--ink-2)}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.kpi b{font:600 26px var(--body);font-variant-numeric:tabular-nums}
+.kpi span{color:var(--ink-2);font-size:13px}
+.rank-grid{display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:760px){.rank-grid{grid-template-columns:1fr}}
+.weights{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:760px){.weights{position:static}}
+.w-row{display:grid;grid-template-columns:1fr 28px;gap:2px 8px;font-size:13px}
+.w-row label{grid-column:1/-1;display:flex;justify-content:space-between}
+.w-row output{font:500 13px var(--mono);text-align:right}
+input[type=range]{width:100%;accent-color:var(--accent);grid-column:1/-1}
+button{font:500 13px var(--body);background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:6px 10px;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chart{display:flex;flex-direction:column;gap:3px;min-width:0}
+.bar-row{display:grid;grid-template-columns:minmax(120px,210px) minmax(0,1fr) 44px;gap:10px;align-items:center;font-size:13px;padding:2px 4px;border-radius:4px;cursor:default}
+.bar-row:hover{background:var(--accent-soft)}
+.bar-row .name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track{position:relative;height:14px}
+.fill{position:absolute;left:0;top:2px;height:10px;background:var(--accent);border-radius:0 4px 4px 0}
+.ci{position:absolute;top:6px;height:2px;background:var(--whisker);opacity:.55}
+.ci::before,.ci::after{content:"";position:absolute;top:-3px;width:2px;height:8px;background:var(--whisker)}
+.ci::before{left:0}.ci::after{right:0}
+.val{font:500 13px var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.axis{display:grid;grid-template-columns:minmax(120px,210px) minmax(0,1fr) 44px;gap:10px;font:12px var(--mono);color:var(--muted);padding:0 4px}
+.axis div:nth-child(2){display:flex;justify-content:space-between}
+#tip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:10px 12px;font-size:12px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:20;min-width:220px}
+#tip table{border-collapse:collapse;width:100%} #tip td{padding:1px 0} #tip td+td{text-align:right;font-family:var(--mono);padding-left:12px}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:8px}
+table.data{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+table.data th,table.data td{padding:8px 12px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}
+table.data th:first-child,table.data td:first-child{text-align:left}
+table.data th{font:500 12px var(--mono);color:var(--muted);letter-spacing:.03em}
+table.data tr:last-child td{border-bottom:0}
+tr.best td{font-weight:600} tr.best td:first-child::after{content:"model";margin-left:8px;font:500 10px var(--mono);color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:0 4px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:20px}
+.two>div{min-width:0;display:flex;flex-direction:column;gap:8px}
+.note{font-size:13px;color:var(--ink-2)}
+ul.lim{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;max-width:72ch}
+ul.lim b{font-weight:600}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+code{font:13px var(--mono)}
+.finds{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:12px}
+.find{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.find b{font:600 30px/1 var(--display);font-variant-numeric:tabular-nums}
+.find span{font-size:14px;color:var(--ink-2)}
+.fig{margin:0;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:10px;overflow-x:auto}
+.fig img{display:block;width:100%;min-width:560px;height:auto}
+ol.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;max-width:72ch}
+pre.code{margin:0;background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;overflow-x:auto;font:13px/1.6 var(--mono)}
+</style>
+
+<div class="wrap">
+<header style="display:flex;flex-direction:column;gap:14px">
+  <div class="eyebrow">Cause: economic mobility · Glassdoor reviews × Indeed postings · US · 2025–2026</div>
+  <h1>Dead-End or Ladder?</h1>
+  <p class="lede">More than a third of US job postings ask for no college degree. These are the jobs most open to first-generation workers, career changers and people who can't afford college. <b>Do they lead anywhere?</b> I combined what employees say about their jobs with what employers offer, and built models that predict how much growth a job gives.</p>
+  <p class="lede" id="lede"></p>
+  <div class="kpis" id="kpis"></div>
+</header>
+
+<section>
+  <div class="eyebrow">Findings</div>
+  <h2>The easiest jobs to get offer the least growth</h2>
+  <div class="finds" id="finds"></div>
+  <figure class="fig"><img src="figures/hourly_and_burnout.png" alt="Left: scatter of share of hourly postings against growth score, falling steeply; no-degree occupations cluster bottom right. Right: median pay against predicted burnout rate, falling, with pharmacists and nurse practitioners as high-pay, high-burnout outliers."></figure>
+  <figure class="fig"><img src="figures/degree_gap.png" alt="Bar chart comparing degree and no-degree occupations: no-degree jobs average around the 20th to 35th percentile on pay, promotion, career opportunities, work-life and culture, and the 66th percentile on burnout."></figure>
+</section>
+
+<section>
+  <div class="eyebrow">Ranking</div>
+  <h2>Growth score by occupation</h2>
+  <p class="note">Each occupation gets a percentile (0–100) on seven components, then a weighted average. Burnout counts against the score. Move the sliders to set your own priorities; the whiskers show the 90% bootstrap interval and appear only at the default (equal) weights.</p>
+  <div class="rank-grid">
+    <div class="weights" id="weights"><h3>Weights</h3></div>
+    <div class="chart">
+      <div class="axis"><div></div><div><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div><div></div></div>
+      <div id="bars"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Financial ROI</div>
+  <h2>Twenty-year earnings premium after education cost</h2>
+  <p class="note" id="roi-note"></p>
+  <div class="tbl"><table class="data" id="roi"></table></div>
+</section>
+
+<section>
+  <div class="eyebrow">Evaluation</div>
+  <h2>Do the models beat simple baselines?</h2>
+  <p class="note">All test sets are split by company: no employer appears in both training and test data, so the model can't score well by memorising one firm's postings or reviews.</p>
+  <div class="two">
+    <div><h3>1 · Salary prediction (posting text → annual pay)</h3><div class="tbl"><table class="data" id="t-sal"></table></div>
+      <p class="note">Ridge regression on TF-IDF of title and description, plus job type, state, occupation and required education. Dollar figures are stripped from descriptions first so the model can't read the answer.</p></div>
+    <div><h3>2 · Burnout (review text → work-life rating ≤ 2)</h3><div class="tbl"><table class="data" id="t-burn"></table></div>
+      <p class="note" id="burn-note"></p></div>
+    <div><h3>3 · Promotion likelihood (review text → career-opportunity rating ≥ 4)</h3><div class="tbl"><table class="data" id="t-promo"></table></div>
+      <p class="note" id="promo-note"></p></div>
+    <div><h3>What the burnout model learned</h3>
+      <p class="note">Phrases that push the prediction toward burnout:</p><p id="terms" style="font:13px var(--mono);color:var(--ink-2)"></p></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Bias &amp; fairness checks</div>
+  <h2>Who the models work less well for</h2>
+  <div class="two">
+    <div><h3>Salary error by wage tier and pay type</h3><div class="tbl"><table class="data" id="t-fair-sal"></table></div></div>
+    <div><h3>Burnout model by employment type</h3><div class="tbl"><table class="data" id="t-fair-burn"></table></div>
+      <p class="note">Calibration gap = mean predicted rate − actual rate. A positive gap means the model over-states burnout for that group.</p></div>
+  </div>
+  <h3 style="margin-top:12px">Limitations and how they affect the communities studied</h3>
+  <ul class="lim" id="lims"></ul>
+</section>
+
+<section>
+  <div class="eyebrow">Method</div>
+  <h2>How I did it</h2>
+  <ol class="steps">
+    <li><b>Clean.</b> Glassdoor sub-ratings of 0 mean "not rated" (27% of them), so they become missing; non-US reviews are dropped to match US-only Indeed. Pay text like "$25 – $28 an hour" is parsed and converted to a yearly figure.</li>
+    <li><b>Combine.</b> The datasets share no ID. 44 ordered keyword rules map free-text job titles in both datasets to the same occupation families (86% of postings, 82% of reviews), and employer names are normalised to match companies.</li>
+    <li><b>Model.</b> Three models, each tested on companies it never saw: salary (ridge regression on posting text), burnout and promotion (TF-IDF + logistic regression on review text).</li>
+    <li><b>Score.</b> Seven components per occupation become percentiles; the growth score is their average. Ratings are shrunk toward the mean for small groups, and 200 bootstrap resamples give the intervals.</li>
+    <li><b>Check bias.</b> Accuracy and calibration by employment type, salary error by wage tier, and a review of who is under-represented.</li>
+    <li><b>Package.</b> The models and reference tables go into one JSON file that powers a calculator scoring any job posting.</li>
+  </ol>
+  <ul class="lim" id="method"></ul>
+</section>
+
+<section>
+  <div class="eyebrow">Reproduce</div>
+  <h2>Run it yourself</h2>
+  <p class="note">All code is in the <code>job_roi_model</code> folder: the notebook <code>analysis.ipynb</code> tells the full story, and <code>README.md</code> has the details. Put <code>glassdoor_reviews.csv</code> and <code>indeed_job_listings.csv</code> in the folder above it, then:</p>
+  <pre class="code"><code>python3 -m venv .venv
+.venv/bin/pip install -r job_roi_model/requirements.txt
+cd job_roi_model
+../.venv/bin/jupyter nbconvert --to notebook --execute --inplace analysis.ipynb --ExecutePreprocessor.timeout=-1</code></pre>
+  <p class="note">That runs everything from the raw files in about 5 minutes on a laptop: extraction, the three models, scores, ROI, charts and the calculator model. Seeds are fixed, so the numbers on this page come back the same. To score your own postings: <code>.venv/bin/python job_roi_model/growth_model.py score my_postings.csv</code>.</p>
+</section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const D = /*__DATA__*/null;
+const M = D.m, OCC = D.occ;
+const $ = s => document.querySelector(s);
+const fmt$ = v => v==null ? "–" : (Math.abs(v)>=1e6 ? (v<0?"−":"")+"$"+(Math.abs(v)/1e6).toFixed(2)+"M" : (v<0?"−":"")+"$"+Math.round(Math.abs(v)/1000)+"k");
+const pct = (v,d=0) => v==null ? "–" : (v*100).toFixed(d)+"%";
+const COMP = [
+  ["median_salary_model","Salary",1,v=>fmt$(v)],
+  ["culture_diversity","Culture + diversity",1,v=>v.toFixed(2)+" / 5"],
+  ["career_opportunities","Career opportunities",1,v=>v.toFixed(2)+" / 5"],
+  ["log_postings","Job openings",1,null],
+  ["promotion_likelihood","Promotion likelihood",1,v=>pct(v)],
+  ["work_life","Work-life balance",1,v=>v.toFixed(2)+" / 5"],
+  ["burnout_rate","Burnout rate (lower is better)",-1,v=>pct(v)],
+];
+const W = Object.fromEntries(COMP.map(c=>[c[0],1]));
+
+// pandas-style percentile rank (average ties)
+function prank(vals){
+  const idx = vals.map((v,i)=>[v,i]).sort((a,b)=>a[0]-b[0]); const r = new Array(vals.length);
+  for(let i=0;i<idx.length;){let j=i;while(j+1<idx.length&&idx[j+1][0]===idx[i][0])j++;const avg=(i+j)/2+1;for(let k=i;k<=j;k++)r[idx[k][1]]=avg/vals.length;i=j+1}
+  return r;
+}
+const ranks = Object.fromEntries(COMP.map(([k,,s])=>[k,prank(OCC.map(o=>o[k]*s))]));
+function scores(){
+  const tot = Object.values(W).reduce((a,b)=>a+b,0)||1;
+  return OCC.map((o,i)=>COMP.reduce((a,[k])=>a+W[k]*ranks[k][i],0)/tot*100);
+}
+
+// header
+const s=M.salary, b=M.burnout, p=M.promotion;
+$("#lede").textContent = `Which jobs pay back the most, in money and in day-to-day quality of work? Three predictive models (salary, burnout and promotion likelihood) turn ${(M.glassdoor_rows.us).toLocaleString()} US Glassdoor reviews and 140,816 Indeed postings (${(s.n_train+s.n_test).toLocaleString()} with pay listed) into a single growth score for ${M.n_occupations_scored} occupations.`;
+const kp = [
+  [`${s.ridge_text_model.MedAPE_pct ?? s.ridge_text_model["MedAPE_%"]}%`, `Median salary error, vs ${s.baseline_occupation_median["MedAPE_%"]}% for the occupation-median baseline`],
+  [`${s.ridge_text_model.R2_log}`, `R² on log salary (baseline ${s.baseline_occupation_median.R2_log})`],
+  [`${b.tfidf_logreg_text_model.ROC_AUC}`, `Burnout ROC-AUC from text alone (keyword rule ${b.baseline_keyword_rule.ROC_AUC})`],
+  [`${p.tfidf_logreg_text_model.ROC_AUC}`, `Promotion ROC-AUC from text alone (keyword rule ${p.baseline_keyword_rule.ROC_AUC})`],
+];
+$("#kpis").innerHTML = kp.map(([v,t])=>`<div class="kpi"><b>${v}</b><span>${t}</span></div>`).join("");
+
+// weights panel
+const wp = $("#weights");
+COMP.forEach(([k,label])=>{
+  const d=document.createElement("div"); d.className="w-row";
+  d.innerHTML=`<label for="w-${k}"><span>${label}</span><output id="o-${k}">1</output></label><input type="range" id="w-${k}" min="0" max="3" step="0.5" value="1">`;
+  d.querySelector("input").addEventListener("input",e=>{W[k]=+e.target.value;d.querySelector("output").textContent=e.target.value;draw()});
+  wp.appendChild(d);
+});
+const rb=document.createElement("button"); rb.textContent="Reset to equal weights";
+rb.onclick=()=>{COMP.forEach(([k])=>{W[k]=1;$("#w-"+k).value=1;$("#o-"+k).textContent="1"});draw()}; wp.appendChild(rb);
+
+// bars
+const tip=$("#tip");
+function draw(){
+  const sc=scores(); const isDefault=Object.values(W).every(v=>v===1);
+  const order=OCC.map((o,i)=>i).sort((a,b)=>sc[b]-sc[a]);
+  $("#bars").innerHTML=order.map(i=>{const o=OCC[i];
+    const ci=isDefault?`<div class="ci" style="left:${o.score_ci_low}%;width:${Math.max(0,o.score_ci_high-o.score_ci_low)}%"></div>`:"";
+    return `<div class="bar-row" data-i="${i}" data-s="${sc[i]}"><div class="name">${o.occupation}</div><div class="track"><div class="fill" style="width:${sc[i]}%"></div>${ci}</div><div class="val">${sc[i].toFixed(0)}</div></div>`}).join("");
+}
+draw();
+$("#bars").addEventListener("mousemove",e=>{
+  const r=e.target.closest(".bar-row"); if(!r){tip.hidden=true;return}
+  const o=OCC[+r.dataset.i];
+  const rows=COMP.filter(c=>c[3]).map(([k,l,,f])=>`<tr><td>${l.replace(" (lower is better)","")}</td><td>${f(o[k])}</td></tr>`).join("");
+  tip.innerHTML=`<b>${o.occupation}</b> · score ${(+r.dataset.s).toFixed(1)}<table>${rows}<tr><td>Job postings</td><td>${o.n_postings.toLocaleString()}</td></tr><tr><td>Reviews</td><td>${o.n_reviews.toLocaleString()}</td></tr><tr><td>Demand trend</td><td>${o.demand_growth_pct>0?"+":""}${o.demand_growth_pct.toFixed(0)}%</td></tr></table>`;
+  tip.hidden=false; const x=Math.min(e.clientX+14, innerWidth-tip.offsetWidth-8), y=Math.min(e.clientY+14, innerHeight-tip.offsetHeight-8);
+  tip.style.left=x+"px"; tip.style.top=y+"px";
+});
+$("#bars").addEventListener("mouseleave",()=>tip.hidden=true);
+
+// ROI table
+const ra=M.roi_assumptions;
+$("#roi-note").textContent=`Net present value over ${ra.horizon_years} years of the occupation's median pay minus a no-degree baseline (${fmt$(ra.no_degree_baseline_salary)}, the median across occupations whose postings ask for no degree), less tuition (${fmt$(ra.tuition_per_year)}/yr) and earnings given up while studying. Discount rate ${ra.discount_rate*100}%. Typical entry-level education (years past high school) comes from a reference table in 02b_roi.py, because posting text rarely states it reliably. Hourly jobs are annualised at full-time hours, so their figures are optimistic. Sorted by NPV.`;
+const roiRows=[...OCC].sort((a,b)=>b.npv_20yr_premium-a.npv_20yr_premium);
+$("#roi").innerHTML=`<tr><th>Occupation</th><th>Median pay</th><th>Typical school (yrs past HS)</th><th>Education cost</th><th>20-yr NPV premium</th><th>ROI multiple</th><th>Demand trend</th></tr>`+
+  roiRows.map(o=>`<tr><td>${o.occupation}</td><td>${fmt$(o.median_salary_model)}</td><td>${o.typical_edu_years}</td><td>${o.education_cost? fmt$(o.education_cost) : "$0"}</td><td class="${o.npv_20yr_premium>=0?'pos':'neg'}">${fmt$(o.npv_20yr_premium)}</td><td>${o.roi_multiple==null?"–":o.roi_multiple.toFixed(1)+"×"}</td><td>${o.demand_growth_pct>0?"+":""}${o.demand_growth_pct.toFixed(0)}%</td></tr>`).join("");
+
+// eval tables
+const regRows=[["Global median","baseline_global_median"],["Occupation median","baseline_occupation_median"],["Ridge text model","ridge_text_model"]];
+$("#t-sal").innerHTML=`<tr><th>Model</th><th>MAE</th><th>Median % error</th><th>R² (log)</th></tr>`+regRows.map(([n,k],i)=>`<tr class="${i==2?'best':''}"><td>${n}</td><td>${fmt$(s[k]["MAE_$"])}</td><td>${s[k]["MedAPE_%"]}%</td><td>${s[k].R2_log}</td></tr>`).join("");
+function clsTable(id,r){
+  const rows=[["Majority class","baseline_majority_class"],["Keyword rule","baseline_keyword_rule"],["Overall stars only","baseline_overall_star_only"],["Text model (TF-IDF + LR)","tfidf_logreg_text_model"],["Text + stars","text_plus_stars_model"]].filter(x=>r[x[1]]);
+  const f=v=>v==null?"–":v.toFixed(3);
+  $(id).innerHTML=`<tr><th>Model</th><th>Accuracy</th><th>F1</th><th>ROC-AUC</th><th>PR-AUC</th></tr>`+rows.map(([n,k])=>`<tr class="${k==='tfidf_logreg_text_model'?'best':''}"><td>${n}</td><td>${f(r[k].accuracy)}</td><td>${f(r[k].F1)}</td><td>${f(r[k].ROC_AUC)}</td><td>${f(r[k].PR_AUC)}</td></tr>`).join("");
+}
+clsTable("#t-burn",b); clsTable("#t-promo",p);
+$("#burn-note").textContent=`${b.n_test.toLocaleString()} held-out reviews, ${pct(b.positive_rate)} positive. The text-only model feeds the score, so burnout is measured from what people write rather than duplicating the work-life star rating. "Stars only" is a deliberately strong baseline: it uses the reviewer's overall rating, which a text-only signal has to compete with.`;
+$("#promo-note").textContent=`${p.n_test.toLocaleString()} held-out reviews, ${pct(p.positive_rate)} positive. Keyword matching on "promotion"/"advancement" is close to chance, because people mention promotion in both pros and cons; the text model reads the context. The overall star rating alone beats the text-only model here, and text + stars is best. The score still uses the text model so star ratings aren't counted twice.`;
+const F=D.f;
+$("#finds").innerHTML=[
+  [`${Math.round(F.no_degree_share*100)}%`, `of job postings are in occupations that need no degree`],
+  [`${Math.round(F.score_no_degree)} vs ${Math.round(F.score_degree)}`, `average growth score, no-degree jobs vs degree jobs`],
+  [`ρ = ${F.rho_hourly.toFixed(2)}`, `between the share of hourly postings and the growth score, the strongest warning sign`],
+  [`ρ = ${F.rho_pay_burnout.toFixed(2)}`, `between pay and burnout: lower-paid workers also burn out more, and are promoted less (ρ = +${F.rho_pay_promo.toFixed(2)} for pay and promotion)`],
+].map(([v,t])=>`<div class="find"><b>${v}</b><span>${t}</span></div>`).join("")+
+  `<div class="find" style="grid-column:1/-1"><span><b style="font:600 15px var(--body);color:var(--ink)">High pay isn't the same as growth.</b> ${F.high_pay_low_growth.map(x=>`${x.occupation} ($${Math.round(x.salary/1000)}k, score ${Math.round(x.score)})`).join(" and ")} rank near the bottom because of burnout and poor work-life balance. <b style="font:600 15px var(--body);color:var(--ink)">Ladders without a degree exist:</b> ${F.best_no_degree.map(x=>`${x.occupation} (${Math.round(x.score)})`).join(", ")}.</span></div>`;
+$("#terms").textContent=b.top_positive_terms.slice(0,16).join(" · ");
+
+// fairness
+const ft=s["by_wage_tier_MedAPE_%"], fp=s["by_pay_type_MedAPE_%"];
+$("#t-fair-sal").innerHTML=`<tr><th>Group</th><th>Median % error</th></tr>`+Object.entries(ft).map(([k,v])=>`<tr><td>${k} wage third</td><td>${v}%</td></tr>`).join("")+Object.entries(fp).map(([k,v])=>`<tr><td>${k} postings</td><td>${v}%</td></tr>`).join("");
+$("#t-fair-burn").innerHTML=`<tr><th>Employment type</th><th>n</th><th>ROC-AUC</th><th>Actual</th><th>Predicted</th><th>Gap</th></tr>`+Object.entries(b.by_employee_status).map(([k,v])=>{const g=v.mean_pred-v.actual_rate;return `<tr><td>${k.replace("_"," ").toLowerCase()}</td><td>${v.n.toLocaleString()}</td><td>${v.ROC_AUC.toFixed(3)}</td><td>${pct(v.actual_rate,1)}</td><td>${pct(v.mean_pred,1)}</td><td>${g>0?"+":""}${(g*100).toFixed(1)} pts</td></tr>`}).join("");
+
+const L=[
+ ["Who writes reviews.", "Glassdoor reviewers self-select: people with very good or very bad experiences post more often. Large tech and consulting firms (Google alone has ~4,000 reviews) are heavily over-represented relative to their share of the workforce, while hourly workers in food service, warehousing and care work are under-represented. Their scores rest on fewer, noisier voices, so the ranking is least certain for the lowest-paid jobs (see the wider whiskers)."],
+ ["Pay transparency laws skew salaries.", "Postings with a salary disclosed come disproportionately from states that require it (CA, NY, WA, CO, IL), which have higher pay. Salaries here run above national medians and favour coastal labour markets; a worker in a lower-cost state should discount them."],
+ ["Hourly pay is annualised at 2,080 hours.", "That assumes full-time, year-round work. For part-time and seasonal roles, which make up much of retail, food service and care work, real annual earnings are lower than shown, so the ROI of those jobs is overstated, not understated."],
+ ["Burnout is a proxy.", "The burnout label is a work-life rating of 1–2, not a clinical measure. The model learns the vocabulary of white-collar complaint well (\"toxic\", \"no work-life balance\"). It over-predicts burnout by 2–4 points for part-time, contract and intern reviewers, and is least accurate for part-time workers, so their burnout estimates are the least reliable."],
+ ["Language and dialect.", "The text models are trained on English reviews. Reviews written in other languages or in non-standard English get less reliable predictions, which can shift scores for occupations with many immigrant or multilingual workers. Spanish-language postings (\"por hora\") are parsed for pay but contribute little text signal."],
+ ["No demographics, so no direct fairness audit.", "Neither dataset records race, gender, age or disability, so we can't test whether the models treat those groups differently. The diversity & inclusion rating is the average of everyone's view, which can hide a poor experience for minority employees inside a high-scoring occupation."],
+ ["Occupation mapping is rule-based.", "Titles are mapped to 44 families with keyword rules (about 86% of postings and 82% of reviews map). Titles like \"Associate\" or \"Team Member\" are ambiguous, and seniority is collapsed, so a family's score blends junior and senior roles."],
+ ["Job counts reflect the scraper, not the economy.", "Monthly posting volumes swing with collection effort, so openings use the total count and the demand trend uses each occupation's share of postings rather than raw growth. The trend covers about 20 months and should be read as a signal, not a forecast. Glassdoor job-listing counts weren't in the data; Indeed postings stand in for them."],
+ ["Use as a starting point.", "A low score for an occupation says nothing about an individual employer, and a high one doesn't guarantee a good job. Using this to steer people, especially first-generation or low-income students, away from fields should come with the caveats above."],
+];
+$("#lims").innerHTML=L.map(([h,t])=>`<li><b>${h}</b> ${t}</li>`).join("");
+const MT=[
+ ["Data.", `${M.glassdoor_rows.all.toLocaleString()} Glassdoor reviews filtered to ${M.glassdoor_rows.us.toLocaleString()} with a US location; 140,816 US Indeed postings. A sub-rating of 0 means "not rated" and is treated as missing.`],
+ ["Components.", "Salary = median posted pay, with the salary model filling postings that don't list one. Culture + diversity = mean of the culture & values and diversity & inclusion ratings. Career opportunities, work-life = star ratings. Promotion likelihood = mean predicted probability from the promotion model. Burnout rate = mean predicted probability from the burnout text model. Job openings = log of Indeed postings."],
+ ["Small-sample handling.", "Occupations need at least 40 reviews and 40 postings. Star ratings are shrunk toward the overall average (empirical Bayes, k = 20) so a small group can't top the list on a few glowing reviews."],
+ ["Uncertainty.", "200 bootstrap resamples of reviews and postings within each occupation; whiskers show the 5th–95th percentile of the resulting score."],
+ ["Outputs.", "Full results are in outputs/occupation_scores.csv and outputs/metrics.json; charts in outputs/figures."],
+];
+$("#method").innerHTML=MT.map(([h,t])=>`<li><b>${h}</b> ${t}</li>`).join("");
+</script>

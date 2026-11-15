@@ -1,0 +1,355 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CareerMetric</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Nunito:wght@400;500;600;700&display=swap">
+<style>
+/* CareerMetric brand: cream paper, navy ink, thin navy frame lines that cross near the corners (from the title slide).
+   Layout: branded hero, then form left / live score right (stacks on phones), saved list and method below.
+   Single deliberate light look, as on the slide. */
+:root{
+  color-scheme: light;
+  --bg:#fffaf5; --surface:#fffdfa; --field:#ffffff;
+  --ink:#0d2148; --ink-2:#38496d; --muted:#6c7891; --rule:#d5dbe6;
+  --accent:#033982; --accent-ink:#fffaf5; --accent-soft:#e6ebf4;
+  --good:#2b6e47; --warn:#9a5c08; --bad:#a3322c;
+  --good-soft:#e5f0e8; --warn-soft:#f8ecd8; --bad-soft:#f6e1df;
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --inset:48px;
+}
+@media (max-width:720px){:root{--inset:10px}}
+html{background:var(--bg)}
+body{background-color:var(--bg);color:var(--ink);font:15px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:72px 88px;
+  /* the frame: two horizontal and two vertical hairlines, running edge to edge and crossing near the corners */
+  background-image:linear-gradient(var(--accent),var(--accent)),linear-gradient(var(--accent),var(--accent)),
+                   linear-gradient(var(--accent),var(--accent)),linear-gradient(var(--accent),var(--accent));
+  background-size:100% 1.5px,100% 1.5px,1.5px 100%,1.5px 100%;
+  background-position:0 40px,0 calc(100% - 40px),var(--inset) 0,calc(100% - var(--inset)) 0;
+  background-repeat:no-repeat}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:32px;padding-inline:calc(var(--inset) + 4px);box-sizing:border-box}
+h1,h2{font-family:var(--display);font-weight:500;margin:0;line-height:1.1;text-wrap:balance;color:var(--accent)}
+h1{font-size:clamp(26px,3.6vw,36px);font-style:italic} h2{font-size:24px}
+p{margin:0;max-width:70ch}
+.lede{color:var(--ink-2);font-size:16px}
+.eyebrow{font:500 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+/* hero, laid out like the title slide */
+.hero{display:flex;flex-direction:column;gap:18px;align-items:center;text-align:center}
+.hero-top{align-self:stretch;display:flex;justify-content:flex-end;align-items:flex-start;gap:16px}
+.hero-top .eyebrow{text-align:right;line-height:1.7;font-size:13px}
+.logo{width:96px;height:auto;flex:none}
+.wordmark{width:min(620px,100%);height:auto;display:block}
+.byline{font-size:clamp(16px,2vw,20px);color:var(--accent);letter-spacing:.02em}
+.hero .lede{max-width:62ch}
+.metrics{margin:0;padding:0 0 0 1.2em;text-align:left;color:var(--ink-2);font-size:15px;line-height:1.75;columns:2;column-gap:40px}
+@media (max-width:520px){.metrics{columns:1}}
+.metrics li::marker{color:var(--accent)}
+.form-title{margin:0;font:500 22px var(--display);color:var(--accent)}
+.import label{font-size:22px}
+.link-row input{font-size:15px;padding:11px 12px}
+.manual{border-top:0;padding-top:0;display:flex;flex-direction:column}
+.manual[open]>.manual-body{display:flex;flex-direction:column;gap:14px}
+.limits{margin:0;padding:0 0 0 1.2em;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--ink-2);max-width:none}
+.limits b{color:var(--ink)}
+.rule{width:64px;height:1.5px;background:var(--accent);border:0;margin:4px 0}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:2px;padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px} @media (max-width:480px){.row{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f label{font-size:13px;font-weight:600;color:var(--ink)}
+.f small{color:var(--muted);font-size:12px}
+input,select,textarea{font:14px var(--body);color:var(--ink);background:var(--field);border:1px solid var(--rule);border-radius:2px;padding:8px 10px;width:100%;box-sizing:border-box}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+textarea{min-height:150px;resize:vertical;line-height:1.5}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+details{border-top:1px solid var(--rule);padding-top:12px}
+summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--accent)}
+details[open] summary{margin-bottom:12px}
+.example{font:600 11px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--warn);background:var(--warn-soft);border-radius:2px;padding:2px 8px;align-self:flex-start}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button{font:600 14px var(--body);letter-spacing:.02em;border-radius:2px;padding:9px 16px;cursor:pointer;border:1px solid var(--accent)}
+.primary{background:var(--accent);color:var(--accent-ink)} .primary:hover{background:#022c66}
+.ghost{background:transparent;color:var(--accent)} .ghost:hover{background:var(--accent-soft)}
+.result{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)} @media (max-width:860px){.result{position:static}}
+.score-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.score{font:500 88px/0.85 var(--display);font-variant-numeric:lining-nums tabular-nums;color:var(--accent)}
+.score small{font:400 18px var(--body);color:var(--muted)}
+.band{font:600 11px var(--body);letter-spacing:.12em;text-transform:uppercase;border-radius:2px;padding:4px 9px}
+.band.good{color:var(--good);background:var(--good-soft)} .band.mid{color:var(--warn);background:var(--warn-soft)} .band.low{color:var(--bad);background:var(--bad-soft)}
+.meta{font-size:13px;color:var(--ink-2)}
+.comp{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:3px 12px;padding:11px 0;border-top:1px solid var(--rule)}
+.comp .name{font-weight:600;font-size:14px}
+.comp .v{font:500 15px var(--display);text-align:right;font-variant-numeric:lining-nums tabular-nums;color:var(--accent)}
+.comp .bar{grid-column:1/-1;height:6px;background:var(--accent-soft);border-radius:1px;position:relative;overflow:hidden}
+.comp .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:1px}
+.comp .src{grid-column:1/-1;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.w-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:10px 16px}
+.w-grid .f label{display:flex;justify-content:space-between}
+input[type=range]{padding:0;accent-color:var(--accent);background:transparent;border:0}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:lining-nums tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+th{font:600 11px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+td button{padding:2px 8px;font-size:12px;border-color:var(--rule);color:var(--ink-2);background:transparent}
+.empty{color:var(--muted);font-size:14px}
+.import{display:flex;flex-direction:column;gap:6px;padding-bottom:16px;border-bottom:1px solid var(--rule)}
+.import label{font:500 18px var(--display);color:var(--accent)}
+.link-row{display:flex;gap:8px} .link-row input{flex:1;min-width:0} .link-row button{white-space:nowrap}
+@media (max-width:480px){.link-row{flex-direction:column}}
+.status{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:baseline}
+.status[data-kind="ok"]{color:var(--good)} .status[data-kind="warn"]{color:var(--warn)} .status[data-kind="err"]{color:var(--bad)}
+.status[data-kind="busy"]{color:var(--ink-2)}
+.status[data-kind="busy"]::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none;align-self:center;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.status[data-kind="busy"]::before{animation:none}}
+.desc-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.linkish{border:0;background:none;padding:0;color:var(--accent);font:600 13px var(--body);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+button:disabled{opacity:.55;cursor:progress}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:18px}
+.how div{display:flex;flex-direction:column;gap:4px} .how b{font:500 17px var(--display);color:var(--accent)} .how span{font-size:13px;color:var(--ink-2)}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="hero-top">
+      <div class="eyebrow">Indeed jobs ×<br>Glassdoor reviews</div>
+    </div>
+    <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">CareerMetric</h1>
+    <img class="wordmark" src="/*__WORDMARK__*/" alt="CareerMetric">
+    <div class="byline">By: Dorthy Victor, Emily Kay, and Janvi Balakrishnan</div>
+    <hr class="rule">
+    <h2>Growth Score Calculator</h2>
+    <p class="lede"><b>Growth Score:</b> on a scale of 0 to 100, it evaluates the potential career growth a job offers using the average of 7 different metrics:</p>
+    <ul class="metrics">
+      <li>Salary</li>
+      <li>Culture and Diversity ratings</li>
+      <li>Career Opportunities provided</li>
+      <li>Job Openings</li>
+      <li>How likely you are to get promoted</li>
+      <li>Work-life balance score</li>
+      <li>Burnout rate (lower = better)</li>
+    </ul>
+  </header>
+
+  <div class="grid">
+    <form class="panel" id="form" autocomplete="off">
+      <h3 class="form-title">Enter the job you're applying for</h3>
+      <div class="f"><label for="job_title">Job title</label><input id="job_title"></div>
+      <div class="row">
+        <div class="f"><label for="company">Company</label><input id="company"><small id="co-hint">&nbsp;</small></div>
+        <div class="f"><label for="state">State</label><select id="state"></select></div>
+      </div>
+      <div class="row">
+        <div class="f"><label for="job_type">Job type</label><select id="job_type"></select></div>
+        <div class="f"><label for="salary">Pay listed (optional)</label>
+          <div style="display:flex;gap:6px"><input id="salary" type="number" min="0" step="any" placeholder="leave blank to predict"><select id="pay_unit" style="width:auto"><option value="1">/yr</option><option value="2080">/hr</option></select></div></div>
+      </div>
+      <div class="f"><div class="desc-head"><label for="description">Job description</label><button type="button" class="linkish" id="from-text">Fill the fields from this text</button></div><textarea id="description" placeholder="Paste the full posting text. It's used to predict pay when none is listed."></textarea><div class="status" id="import-status">Paste the posting text, then press "Fill the fields from this text", or type the details in.</div></div>
+      <details>
+        <summary>Optional: your own knowledge</summary>
+        <div class="f"><label for="occupation">Occupation</label><select id="occupation"></select><small>Detected from the job title. Change it if the guess is wrong.</small></div>
+        <p class="meta" style="margin-top:10px">If you know the company's Glassdoor ratings (1–5 stars), enter them here and they replace the review data.</p>
+        <div class="row" style="grid-template-columns:repeat(3,1fr)">
+          <div class="f"><label for="culture_diversity">Culture + diversity</label><input id="culture_diversity" type="number" min="1" max="5" step="0.1"></div>
+          <div class="f"><label for="career_opportunities">Career opps</label><input id="career_opportunities" type="number" min="1" max="5" step="0.1"></div>
+          <div class="f"><label for="work_life">Work-life</label><input id="work_life" type="number" min="1" max="5" step="0.1"></div>
+        </div>
+      </details>
+      <details>
+        <summary>Optional: what matters most to you</summary>
+        <div class="w-grid" id="weights"></div>
+      </details>
+      <div class="btns"><button type="submit" class="primary">Save to my list</button><button type="button" class="ghost" id="clear">Clear form</button></div>
+    </form>
+
+    <section class="panel result" aria-live="polite">
+      <div class="eyebrow">Growth score</div>
+      <div class="score-head"><div class="score" id="score">–<small> / 100</small></div><span class="band" id="band"></span></div>
+      <p class="meta" id="meta"></p>
+      <div id="comps"></div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <h2>My list</h2>
+    <p class="meta">Postings you save stay in this browser only, so you can compare the jobs you're applying for.</p>
+    <div class="tbl"><table id="saved"></table></div>
+  </section>
+
+</div>
+
+<script>/*__SCORER__*/</script>
+<script>
+const MODEL = /*__MODEL__*/null;
+const G = GrowthScorer.create(MODEL);
+const $ = id => document.getElementById(id);
+const LABEL = Object.fromEntries(MODEL.components.map(c => [c[0], c[1]]));
+const W = Object.fromEntries(MODEL.components.map(c => [c[0], 1]));
+const EXAMPLE = {job_title: "Data Analyst", company: "Kaiser Permanente", state: "CA", job_type: "Full-time", salary: "",
+  description: "Analyze clinical and operational data using SQL, Python and Tableau. Build dashboards and reports for leadership, partner with care teams to improve patient outcomes. Bachelor's degree in statistics, economics or a related field; 2+ years of analytics experience."};
+
+// fill selects
+$("state").innerHTML = MODEL.states.map(s => `<option>${s}</option>`).join("");
+$("job_type").innerHTML = MODEL.job_types.map(s => `<option value="${s}">${s === "unknown" ? "Not listed" : s}</option>`).join("");
+$("occupation").innerHTML = `<option value="">Detect from title</option>` + Object.keys(MODEL.occupations).sort().map(o => `<option>${o}</option>`).join("");
+$("weights").innerHTML = MODEL.components.map(([k, l]) => `<div class="f"><label for="w-${k}"><span>${l}</span><output id="wo-${k}">1</output></label><input type="range" id="w-${k}" min="0" max="3" step="0.5" value="1"></div>`).join("");
+MODEL.components.forEach(([k]) => $("w-" + k).addEventListener("input", e => { W[k] = +e.target.value; $("wo-" + k).textContent = e.target.value; update(); }));
+
+const FIELDS = ["job_title", "company", "state", "job_type", "salary", "description", "occupation", "culture_diversity", "career_opportunities", "work_life"];
+function read() {
+  const p = Object.fromEntries(FIELDS.map(f => [f, $(f).value.trim()]));
+  if (p.salary) p.salary = +p.salary * +$("pay_unit").value;
+  return p;
+}
+function fill(p) { FIELDS.forEach(f => { $(f).value = p[f] ?? ""; }); }
+
+const fmt = {
+  salary: v => "$" + Math.round(v / 1000) + "k",
+  job_openings: v => Math.round(Math.exp(v)).toLocaleString() + " posts",
+  promotion_likelihood: v => Math.round(v * 100) + "%",
+  burnout_rate: v => Math.round(v * 100) + "%",
+};
+const stars = v => v.toFixed(1) + " ★";
+
+function update() {
+  const p = read();
+  if (!p.job_title) { $("score").innerHTML = "–<small> / 100</small>"; $("band").textContent = ""; $("band").className = "band"; $("meta").textContent = "Enter a job title to see its growth score."; $("comps").innerHTML = ""; return; }
+  const r = G.score(p, W);
+  const s = r.growth_score;
+  $("score").innerHTML = `${Math.round(s)}<small> / 100</small>`;
+  const band = s >= 65 ? ["good", "Strong prospects"] : s >= 40 ? ["mid", "Middle of the pack"] : ["low", "Weaker prospects"];
+  $("band").className = "band " + band[0]; $("band").textContent = band[1];
+  $("meta").textContent = `Occupation: ${r.occupation || "not recognised, using overall averages"}${p.occupation ? " (your choice)" : ""} · ` +
+    (r.company_matched ? `Matched Glassdoor company: ${r.company_matched}` : (p.company ? "Company not found in reviews, using occupation averages" : "No company entered"));
+  $("co-hint").textContent = p.company ? (r.company_matched ? `✓ ${r.company_matched} found in reviews` : "Not found, occupation average used") : " ";
+  $("comps").innerHTML = MODEL.components.map(([k]) => {
+    const v = r.values[k], pc = r.percentiles[k];
+    const shown = (fmt[k] || stars)(v);
+    return `<div class="comp"><span class="name">${LABEL[k]}</span><span class="v">${shown}</span>
+      <div class="bar" title="Better than ${Math.round(pc * 100)}% of occupations"><i style="width:${Math.max(2, pc * 100)}%"></i></div>
+      <div class="src"><span>${r.sources[k]}</span><span>${Math.round(pc * 100)} / 100</span></div></div>`;
+  }).join("");
+  return r;
+}
+let t; FIELDS.concat(["pay_unit"]).forEach(f => $(f).addEventListener("input", () => { clearTimeout(t); t = setTimeout(update, 150); }));
+
+// saved list (this browser only)
+const KEY = "growth-calc-saved";
+let saved = []; try { saved = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { saved = []; }
+function persist() { try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} }
+function drawSaved() {
+  if (!saved.length) { $("saved").innerHTML = `<tr><td class="empty">Nothing saved yet. Score a posting and press "Save to my list".</td></tr>`; return; }
+  const ks = MODEL.components.map(c => c[0]);
+  $("saved").innerHTML = `<tr><th>Job</th><th>Company</th><th>Score</th>${ks.map(k => `<th>${LABEL[k].replace(" rate", "").replace(" likelihood", "")}</th>`).join("")}<th></th></tr>` +
+    saved.map((s, i) => [s, G.score(s.p, W)]).sort((a, b) => b[1].growth_score - a[1].growth_score).map(([s, r]) =>
+      `<tr><td>${esc(s.p.job_title)}</td><td>${esc(s.p.company || "–")}</td><td><b>${Math.round(r.growth_score)}</b></td>${ks.map(k => `<td>${Math.round(r.percentiles[k] * 100)}</td>`).join("")}<td><button type="button" data-id="${s.id}">Remove</button></td></tr>`).join("");
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+$("saved").addEventListener("click", e => { const id = e.target.dataset.id; if (!id) return; saved = saved.filter(s => s.id !== id); persist(); drawSaved(); });
+$("form").addEventListener("submit", e => { e.preventDefault(); const p = read(); if (!p.job_title) return; saved.push({id: String(Date.now()), p}); persist(); drawSaved(); });
+const EMPTY = {state: "Other/Remote", job_type: "unknown"};
+$("clear").addEventListener("click", () => { fill(EMPTY); setStatus("", "Paste the posting text, then press \"Fill the fields from this text\", or type the details in."); update(); $("job_title").focus(); });
+MODEL.components.forEach(([k]) => $("w-" + k).addEventListener("input", drawSaved));
+
+fill(EMPTY); update(); drawSaved();
+
+// ---------------------------------------------------------------- fill the fields from pasted posting text
+const STATE_NAMES = {alabama:"AL",alaska:"AK",arizona:"AZ",arkansas:"AR",california:"CA",colorado:"CO",connecticut:"CT",delaware:"DE",florida:"FL",georgia:"GA",hawaii:"HI",idaho:"ID",illinois:"IL",indiana:"IN",iowa:"IA",kansas:"KS",kentucky:"KY",louisiana:"LA",maine:"ME",maryland:"MD",massachusetts:"MA",michigan:"MI",minnesota:"MN",mississippi:"MS",missouri:"MO",montana:"MT",nebraska:"NE",nevada:"NV","new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY","north carolina":"NC","north dakota":"ND",ohio:"OH",oklahoma:"OK",oregon:"OR",pennsylvania:"PA","rhode island":"RI","south carolina":"SC","south dakota":"SD",tennessee:"TN",texas:"TX",utah:"UT",vermont:"VT",virginia:"VA",washington:"WA","west virginia":"WV",wisconsin:"WI",wyoming:"WY","district of columbia":"DC"};
+const PERIOD = {year: 1, yr: 1, annum: 1, hour: 2080, hr: 2080, week: 52, month: 12, day: 260};
+let sampler = null;
+const cl = window.claude;
+// start connecting at load; a click waits for these instead of failing while they are still pending
+const sampleReady = cl && cl.use ? cl.use("sample").then(s => (sampler = s)).catch(() => null) : Promise.resolve(null);
+function setStatus(kind, msg) {
+  const s = $("import-status"); s.dataset.kind = kind; s.textContent = msg;
+}
+
+function stateFrom(text) {
+  const m = /,\s*([A-Z]{2})\b/.exec(text);
+  if (m && MODEL.states.includes(m[1])) return m[1];
+  const low = text.toLowerCase();
+  let best = null, at = Infinity;
+  for (const [name, code] of Object.entries(STATE_NAMES)) {
+    const i = low.search(new RegExp("\\b" + name + "\\b"));
+    if (i >= 0 && i < at && !(name === "washington" && /washington,?\s*d\.?c/.test(low))) { best = code; at = i; }
+  }
+  return best;
+}
+function payFrom(text) {
+  const m = /\$\s?([\d,]+(?:\.\d+)?)\s*(?:k\b)?(?:\s*(?:-|–|to)\s*\$\s?([\d,]+(?:\.\d+)?))?\s*(?:a|an|per|\/)\s*(year|yr|annum|hour|hr|week|month|day)/i.exec(text);
+  if (!m) return null;
+  const nums = [m[1], m[2]].filter(Boolean).map(x => +x.replace(/,/g, ""));
+  const v = nums.reduce((a, b) => a + b, 0) / nums.length * PERIOD[m[3].toLowerCase()];
+  return v >= 15000 && v <= 1000000 ? Math.round(v) : null;
+}
+function jobTypeFrom(text) {
+  const types = MODEL.job_types.filter(t => t !== "unknown").sort((a, b) => b.length - a.length);
+  return types.find(t => text.toLowerCase().includes(t.toLowerCase())) || "unknown";
+}
+// rule-based fallback: works without Claude, best on Indeed-style pages
+function ruleExtract(text, pageTitle) {
+  const lines = text.split("\n").map(s => s.trim()).filter(Boolean);
+  let title = (pageTitle || "").split(/\s+[-|–]\s+/)[0].trim();
+  if (!title) title = lines.find(l => l.length > 3 && l.length < 90 && !/sign in|skip to|menu|cookie/i.test(l)) || "";
+  const ti = title ? lines.findIndex(l => l === title || (l.startsWith(title) && l.length < title.length + 40)) : -1;
+  const company = ti >= 0 && lines[ti + 1] && lines[ti + 1].length < 70 ? lines[ti + 1].replace(/\s*\d(\.\d)?\s*out of.*$/i, "") : "";
+  return {job_title: title, company, state: stateFrom(text), job_type: jobTypeFrom(text), salary: payFrom(text)};
+}
+async function claudeExtract(text) {
+  const prompt = `From this job posting, reply with ONLY a JSON object:
+{"job_title": string, "company": string, "state": two-letter US state code or null (use null for fully remote with no state), "job_type": one of ${JSON.stringify(MODEL.job_types)} ("unknown" if not stated), "pay_min": number or null, "pay_max": number or null, "pay_period": "year"|"hour"|"week"|"month"|"day"|null}
+Use the employer's company name, not the job board. Only use pay the posting states; never estimate it.
+
+POSTING:
+${text.slice(0, 12000)}`;
+  const r = await sampler.json(prompt, {modelTier: "quick"});
+  const nums = [r.pay_min, r.pay_max].filter(x => typeof x === "number" && x > 0);
+  let salary = null;
+  if (nums.length && PERIOD[r.pay_period]) {
+    salary = Math.round(nums.reduce((a, b) => a + b, 0) / nums.length * PERIOD[r.pay_period]);
+    if (salary < 15000 || salary > 1000000) salary = null;
+  }
+  return {job_title: String(r.job_title || ""), company: String(r.company || ""),
+          state: MODEL.states.includes(r.state) ? r.state : null,
+          job_type: MODEL.job_types.includes(r.job_type) ? r.job_type : "unknown", salary};
+}
+async function extract(text, pageTitle) {
+  const rules = ruleExtract(text, pageTitle);
+  if (!sampler) return {f: rules, how: "simple rules"};
+  try {
+    const c = await claudeExtract(text);
+    // keep rule-based values where Claude left a gap
+    return {f: {job_title: c.job_title || rules.job_title, company: c.company || rules.company,
+                state: c.state || rules.state, job_type: c.job_type !== "unknown" ? c.job_type : rules.job_type,
+                salary: c.salary ?? rules.salary}, how: "Claude"};
+  } catch (e) {
+    return {f: rules, how: e.code === "not_granted" ? "simple rules (Claude wasn't allowed)" : "simple rules"};
+  }
+}
+function applyFields(f, description) {
+  $("job_title").value = f.job_title || "";
+  $("company").value = f.company || "";
+  $("state").value = f.state || "Other/Remote";
+  $("job_type").value = f.job_type || "unknown";
+  $("salary").value = f.salary || ""; $("pay_unit").value = "1";
+  if (description !== undefined) $("description").value = description;
+  $("occupation").value = "";
+  update();
+}
+async function fromText() {
+  const text = $("description").value.trim();
+  if (text.length < 40) { setStatus("err", "Paste the full posting into the description box first."); $("description").focus(); return; }
+  const btn = $("from-text"); btn.disabled = true;
+  setStatus("busy", "Picking out the title, company, location and pay…");
+  try {
+    const {f, how} = await extract(text, "");
+    applyFields(f);
+    setStatus(f.job_title ? "ok" : "warn", f.job_title ? `Filled from your pasted text using ${how}. Check the fields.` : "Couldn't find a job title. Please type it in.");
+  } finally { btn.disabled = false; }
+}
+$("from-text").addEventListener("click", fromText);
+</script>

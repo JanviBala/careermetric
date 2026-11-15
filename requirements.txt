@@ -1,0 +1,13 @@
+# Python 3.12+ (built and tested on 3.14.2)
+pandas==3.1.1
+numpy==2.5.4
+scipy==1.18.1
+scikit-learn==1.9.1
+matplotlib==3.11.2
+pyarrow==26.0.1
+joblib==1.6.0
+# to run the notebook
+nbformat==5.11.1
+nbconvert==7.17.2
+ipykernel==7.4.0
+jupyter_core==5.9.1

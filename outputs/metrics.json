@@ -1,0 +1,389 @@
+{
+  "salary": {
+    "n_train": 94596,
+    "n_test": 25213,
+    "split": "grouped by company (80/20)",
+    "baseline_global_median": {
+      "MAE_$": 57225,
+      "MedAPE_%": 55.2,
+      "R2_log": -0.023
+    },
+    "baseline_occupation_median": {
+      "MAE_$": 36464,
+      "MedAPE_%": 24.1,
+      "R2_log": 0.503
+    },
+    "ridge_text_model": {
+      "MAE_$": 21871,
+      "MedAPE_%": 15.7,
+      "R2_log": 0.84
+    },
+    "by_wage_tier_MedAPE_%": {
+      "low": 14.9,
+      "middle": 16.0,
+      "high": 16.6
+    },
+    "by_pay_type_MedAPE_%": {
+      "hourly": 14.9,
+      "salaried": 16.6
+    }
+  },
+  "glassdoor_rows": {
+    "all": 163480,
+    "us": 117268
+  },
+  "burnout": {
+    "n_train": 62755,
+    "n_test": 17371,
+    "positive_rate": 0.253,
+    "baseline_majority_class": {
+      "accuracy": 0.747,
+      "F1": 0.0
+    },
+    "baseline_keyword_rule": {
+      "accuracy": 0.757,
+      "F1": 0.353,
+      "ROC_AUC": 0.593,
+      "PR_AUC": 0.328,
+      "Brier": 0.243
+    },
+    "baseline_overall_star_only": {
+      "accuracy": 0.832,
+      "F1": 0.658,
+      "ROC_AUC": 0.856,
+      "PR_AUC": 0.632,
+      "Brier": 0.121
+    },
+    "tfidf_logreg_text_model": {
+      "accuracy": 0.819,
+      "F1": 0.595,
+      "ROC_AUC": 0.851,
+      "PR_AUC": 0.682,
+      "Brier": 0.128
+    },
+    "text_plus_stars_model": {
+      "accuracy": 0.844,
+      "F1": 0.676,
+      "ROC_AUC": 0.891,
+      "PR_AUC": 0.75,
+      "Brier": 0.111
+    },
+    "by_employee_status": {
+      "CONTRACT": {
+        "n": 605,
+        "ROC_AUC": 0.862,
+        "actual_rate": 0.203,
+        "mean_pred": 0.226
+      },
+      "INTERN": {
+        "n": 698,
+        "ROC_AUC": 0.864,
+        "actual_rate": 0.062,
+        "mean_pred": 0.104
+      },
+      "PART_TIME": {
+        "n": 2313,
+        "ROC_AUC": 0.814,
+        "actual_rate": 0.2,
+        "mean_pred": 0.233
+      },
+      "REGULAR": {
+        "n": 13375,
+        "ROC_AUC": 0.853,
+        "actual_rate": 0.275,
+        "mean_pred": 0.267
+      }
+    },
+    "top_positive_terms": [
+      "no work",
+      "toxic",
+      "poor work",
+      "horrible",
+      "pros none",
+      "overworked",
+      "burnout",
+      "terrible",
+      "worst",
+      "cons work",
+      "awful",
+      "not good",
+      "not great",
+      "poor",
+      "not worth",
+      "zero",
+      "no",
+      "bad work",
+      "favoritism",
+      "stressful"
+    ],
+    "top_negative_terms": [
+      "balance cons",
+      "good work",
+      "great",
+      "pros work",
+      "balance but",
+      "great work",
+      "cons none",
+      "good",
+      "flexible",
+      "good wlb",
+      "no cons",
+      "amazing",
+      "excellent",
+      "cons sometimes",
+      "best",
+      "great culture",
+      "awesome",
+      "not too",
+      "supportive",
+      "cons nothing"
+    ]
+  },
+  "promotion": {
+    "n_train": 62378,
+    "n_test": 18852,
+    "positive_rate": 0.504,
+    "baseline_majority_class": {
+      "accuracy": 0.496,
+      "F1": 0.0
+    },
+    "baseline_keyword_rule": {
+      "accuracy": 0.514,
+      "F1": 0.091,
+      "ROC_AUC": 0.518,
+      "PR_AUC": 0.519,
+      "Brier": 0.486
+    },
+    "baseline_overall_star_only": {
+      "accuracy": 0.826,
+      "F1": 0.834,
+      "ROC_AUC": 0.886,
+      "PR_AUC": 0.844,
+      "Brier": 0.13
+    },
+    "tfidf_logreg_text_model": {
+      "accuracy": 0.763,
+      "F1": 0.764,
+      "ROC_AUC": 0.843,
+      "PR_AUC": 0.834,
+      "Brier": 0.162
+    },
+    "text_plus_stars_model": {
+      "accuracy": 0.825,
+      "F1": 0.827,
+      "ROC_AUC": 0.901,
+      "PR_AUC": 0.896,
+      "Brier": 0.126
+    },
+    "by_employee_status": {
+      "CONTRACT": {
+        "n": 747,
+        "ROC_AUC": 0.814,
+        "actual_rate": 0.506,
+        "mean_pred": 0.505
+      },
+      "INTERN": {
+        "n": 709,
+        "ROC_AUC": 0.757,
+        "actual_rate": 0.85,
+        "mean_pred": 0.751
+      },
+      "PART_TIME": {
+        "n": 2536,
+        "ROC_AUC": 0.764,
+        "actual_rate": 0.396,
+        "mean_pred": 0.434
+      },
+      "REGULAR": {
+        "n": 14437,
+        "ROC_AUC": 0.854,
+        "actual_rate": 0.508,
+        "mean_pred": 0.492
+      }
+    },
+    "top_positive_terms": [
+      "great",
+      "growth cons",
+      "no cons",
+      "amazing",
+      "excellent",
+      "best",
+      "cons nothing",
+      "love",
+      "best company",
+      "awesome",
+      "incredible",
+      "supportive",
+      "pros career",
+      "outstanding",
+      "fantastic",
+      "advancement cons",
+      "loved",
+      "cons none",
+      "pros management",
+      "good"
+    ],
+    "top_negative_terms": [
+      "no",
+      "no room",
+      "terrible",
+      "pros none",
+      "toxic",
+      "horrible",
+      "poor",
+      "limited",
+      "not",
+      "limited opportunities",
+      "not great",
+      "not worth",
+      "much room",
+      "cons ceo",
+      "awful",
+      "no opportunity",
+      "no career",
+      "little room",
+      "not lot",
+      "no growth"
+    ]
+  },
+  "roi_assumptions": {
+    "tuition_per_year": 27000,
+    "discount_rate": 0.03,
+    "horizon_years": 20,
+    "no_degree_baseline_salary": 46800,
+    "no_degree_occupations": [
+      "Real Estate / Property",
+      "Manager (general)",
+      "Administrative / Office",
+      "Server / Bartender / Host",
+      "Cashier / Retail Associate",
+      "Bank Teller / Loan Officer",
+      "Barista",
+      "Cook / Kitchen",
+      "Housekeeping / Janitorial",
+      "Customer Service",
+      "Manufacturing / Production",
+      "Driver / Delivery",
+      "Retail Store Manager",
+      "Warehouse / Logistics",
+      "Security Guard"
+    ],
+    "edu_rule": "reference table of typical entry-level education (years past high school)",
+    "edu_table": {
+      "Physician / Surgeon": 8,
+      "Pharmacist": 8,
+      "Physical / Occupational Therapist": 7,
+      "Legal": 4,
+      "Nurse Practitioner / PA": 6,
+      "Data Scientist / ML": 6,
+      "Scientist / Lab": 4,
+      "Registered Nurse": 4,
+      "Software Engineer": 4,
+      "Engineer (non-software)": 4,
+      "Data / BI Analyst": 4,
+      "IT / Systems / Security": 2,
+      "Product Manager": 4,
+      "Designer (UX/Graphic)": 4,
+      "Accountant / Auditor": 4,
+      "Financial Analyst / Banking": 4,
+      "Consultant": 4,
+      "HR / Recruiter": 4,
+      "Marketing / Communications": 4,
+      "Account Executive / B2B Sales": 4,
+      "Project / Program Manager": 4,
+      "Business / Operations Analyst": 4,
+      "Operations / General Manager": 4,
+      "Teacher / Educator": 4,
+      "Behavior Technician / Counselor": 2,
+      "Dental": 2,
+      "Medical Assistant / CNA": 1,
+      "Pharmacy Technician": 1,
+      "Real Estate / Property": 0,
+      "Manager (general)": 0,
+      "Administrative / Office": 0,
+      "Customer Service": 0,
+      "Retail Store Manager": 0,
+      "Cashier / Retail Associate": 0,
+      "Barista": 0,
+      "Cook / Kitchen": 0,
+      "Server / Bartender / Host": 0,
+      "Housekeeping / Janitorial": 0,
+      "Driver / Delivery": 0,
+      "Warehouse / Logistics": 0,
+      "Maintenance / Skilled Trades": 1,
+      "Manufacturing / Production": 0,
+      "Security Guard": 0,
+      "Bank Teller / Loan Officer": 0
+    }
+  },
+  "n_occupations_scored": 44,
+  "coverage": {
+    "postings_mapped": 0.856,
+    "us_reviews_mapped": 0.824
+  },
+  "component_corr": {
+    "median_salary_model": {
+      "median_salary_model": 1.0,
+      "culture_diversity": 0.5,
+      "career_opportunities": 0.6,
+      "log_postings": -0.04,
+      "promotion_likelihood": 0.63,
+      "work_life": 0.5,
+      "burnout_rate": -0.48
+    },
+    "culture_diversity": {
+      "median_salary_model": 0.5,
+      "culture_diversity": 1.0,
+      "career_opportunities": 0.84,
+      "log_postings": 0.13,
+      "promotion_likelihood": 0.86,
+      "work_life": 0.84,
+      "burnout_rate": -0.81
+    },
+    "career_opportunities": {
+      "median_salary_model": 0.6,
+      "culture_diversity": 0.84,
+      "career_opportunities": 1.0,
+      "log_postings": 0.13,
+      "promotion_likelihood": 0.91,
+      "work_life": 0.66,
+      "burnout_rate": -0.62
+    },
+    "log_postings": {
+      "median_salary_model": -0.04,
+      "culture_diversity": 0.13,
+      "career_opportunities": 0.13,
+      "log_postings": 1.0,
+      "promotion_likelihood": 0.13,
+      "work_life": 0.09,
+      "burnout_rate": -0.2
+    },
+    "promotion_likelihood": {
+      "median_salary_model": 0.63,
+      "culture_diversity": 0.86,
+      "career_opportunities": 0.91,
+      "log_postings": 0.13,
+      "promotion_likelihood": 1.0,
+      "work_life": 0.73,
+      "burnout_rate": -0.73
+    },
+    "work_life": {
+      "median_salary_model": 0.5,
+      "culture_diversity": 0.84,
+      "career_opportunities": 0.66,
+      "log_postings": 0.09,
+      "promotion_likelihood": 0.73,
+      "work_life": 1.0,
+      "burnout_rate": -0.91
+    },
+    "burnout_rate": {
+      "median_salary_model": -0.48,
+      "culture_diversity": -0.81,
+      "career_opportunities": -0.62,
+      "log_postings": -0.2,
+      "promotion_likelihood": -0.73,
+      "work_life": -0.91,
+      "burnout_rate": 1.0
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "salary_model": {
+    "MedAPE_%": 15.8,
+    "MAE_$": 22587,
+    "R2_log": 0.83
+  },
+  "burnout_rate_model_ROC_AUC": 0.852,
+  "promotion_likelihood_model_ROC_AUC": 0.844,
+  "json_vs_sklearn_max_rel_diff": 0.00032428885612427943,
+  "score_check": {
+    "n_held_out_postings": 400,
+    "mean_abs_score_change_using_predicted_salary": 0.93,
+    "share_within_5_points": 1.0,
+    "share_company_matched": 0.297
+  }
+}
