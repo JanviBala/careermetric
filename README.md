@@ -5,6 +5,7 @@
 Which jobs give workers growth in their career?
 
 **Cause:** economic mobility for workers without a college degree.
+
 **Question:** using data on what employees say about their jobs (Glassdoor dataset)  and what employers offer (Indeed dataset), can we predict how much growth a job offers, and do the most accessible jobs offer the least amount of career growth?
 
 **Findings:** yes. Occupations that typically need no degree make up about a third of job postings but average a growth score of ~34/100, versus ~60 for degree jobs. They pay less, show more burnout and offer fewer promotions.
