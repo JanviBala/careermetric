@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Nunito:wght@400;500;600;700&display=swap">
 <style>
 /* CareerMetric brand: cream paper, navy ink, thin navy frame lines that cross near the corners (from the title slide).
-   Layout: branded hero, then form left / live score right (stacks on phones), saved list and method below.
+   Layout: branded hero, then form left / live score right (stacks on phones), weights inside the form.
    Single deliberate light look, as on the slide. */
 :root{
   color-scheme: light;
@@ -86,6 +86,8 @@ button{font:600 14px var(--body);letter-spacing:.02em;border-radius:2px;padding:
 .comp .bar{grid-column:1/-1;height:6px;background:var(--accent-soft);border-radius:1px;position:relative;overflow:hidden}
 .comp .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:1px}
 .comp .src{grid-column:1/-1;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.weights-box{border-top:1px solid var(--rule);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.weights-title{margin:0;font:500 19px var(--display);color:var(--accent)}
 .w-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:10px 16px}
 .w-grid .f label{display:flex;justify-content:space-between}
 input[type=range]{padding:0;accent-color:var(--accent);background:transparent;border:0}
@@ -149,21 +151,12 @@ button:disabled{opacity:.55;cursor:progress}
           <div style="display:flex;gap:6px"><input id="salary" type="number" min="0" step="any" placeholder="leave blank to predict"><select id="pay_unit" style="width:auto"><option value="1">/yr</option><option value="2080">/hr</option></select></div></div>
       </div>
       <div class="f"><div class="desc-head"><label for="description">Job description</label><button type="button" class="linkish" id="from-text">Fill the fields from this text</button></div><textarea id="description" placeholder="Paste the full posting text. It's used to predict pay when none is listed."></textarea><div class="status" id="import-status">Paste the posting text, then press "Fill the fields from this text", or type the details in.</div></div>
-      <details>
-        <summary>Optional: your own knowledge</summary>
-        <div class="f"><label for="occupation">Occupation</label><select id="occupation"></select><small>Detected from the job title. Change it if the guess is wrong.</small></div>
-        <p class="meta" style="margin-top:10px">If you know the company's Glassdoor ratings (1–5 stars), enter them here and they replace the review data.</p>
-        <div class="row" style="grid-template-columns:repeat(3,1fr)">
-          <div class="f"><label for="culture_diversity">Culture + diversity</label><input id="culture_diversity" type="number" min="1" max="5" step="0.1"></div>
-          <div class="f"><label for="career_opportunities">Career opps</label><input id="career_opportunities" type="number" min="1" max="5" step="0.1"></div>
-          <div class="f"><label for="work_life">Work-life</label><input id="work_life" type="number" min="1" max="5" step="0.1"></div>
-        </div>
-      </details>
-      <details>
-        <summary>Optional: what matters most to you</summary>
+      <div class="weights-box">
+        <h3 class="weights-title">What matters most to you</h3>
+        <p class="meta">Rate each one from 1 (matters a little) to 5 (matters a lot). The score updates as you move the sliders.</p>
         <div class="w-grid" id="weights"></div>
-      </details>
-      <div class="btns"><button type="submit" class="primary">Save to my list</button><button type="button" class="ghost" id="clear">Clear form</button></div>
+      </div>
+      <div class="btns"><button type="button" class="ghost" id="clear">Clear form</button></div>
     </form>
 
     <section class="panel result" aria-live="polite">
@@ -174,11 +167,6 @@ button:disabled{opacity:.55;cursor:progress}
     </section>
   </div>
 
-  <section class="panel">
-    <h2>My list</h2>
-    <p class="meta">Postings you save stay in this browser only, so you can compare the jobs you're applying for.</p>
-    <div class="tbl"><table id="saved"></table></div>
-  </section>
 
 </div>
 
@@ -275,18 +263,17 @@ const MODEL = {"version":1,"built_from":"glassdoor_reviews.csv + indeed_job_list
 const G = GrowthScorer.create(MODEL);
 const $ = id => document.getElementById(id);
 const LABEL = Object.fromEntries(MODEL.components.map(c => [c[0], c[1]]));
-const W = Object.fromEntries(MODEL.components.map(c => [c[0], 1]));
+const W = Object.fromEntries(MODEL.components.map(c => [c[0], 3]));
 const EXAMPLE = {job_title: "Data Analyst", company: "Kaiser Permanente", state: "CA", job_type: "Full-time", salary: "",
   description: "Analyze clinical and operational data using SQL, Python and Tableau. Build dashboards and reports for leadership, partner with care teams to improve patient outcomes. Bachelor's degree in statistics, economics or a related field; 2+ years of analytics experience."};
 
 // fill selects
 $("state").innerHTML = MODEL.states.map(s => `<option>${s}</option>`).join("");
 $("job_type").innerHTML = MODEL.job_types.map(s => `<option value="${s}">${s === "unknown" ? "Not listed" : s}</option>`).join("");
-$("occupation").innerHTML = `<option value="">Detect from title</option>` + Object.keys(MODEL.occupations).sort().map(o => `<option>${o}</option>`).join("");
-$("weights").innerHTML = MODEL.components.map(([k, l]) => `<div class="f"><label for="w-${k}"><span>${l}</span><output id="wo-${k}">1</output></label><input type="range" id="w-${k}" min="0" max="3" step="0.5" value="1"></div>`).join("");
+$("weights").innerHTML = MODEL.components.map(([k, l]) => `<div class="f"><label for="w-${k}"><span>${l}</span><output id="wo-${k}">3</output></label><input type="range" id="w-${k}" min="1" max="5" step="1" value="3"></div>`).join("");
 MODEL.components.forEach(([k]) => $("w-" + k).addEventListener("input", e => { W[k] = +e.target.value; $("wo-" + k).textContent = e.target.value; update(); }));
 
-const FIELDS = ["job_title", "company", "state", "job_type", "salary", "description", "occupation", "culture_diversity", "career_opportunities", "work_life"];
+const FIELDS = ["job_title", "company", "state", "job_type", "salary", "description"];
 function read() {
   const p = Object.fromEntries(FIELDS.map(f => [f, $(f).value.trim()]));
   if (p.salary) p.salary = +p.salary * +$("pay_unit").value;
@@ -310,7 +297,7 @@ function update() {
   $("score").innerHTML = `${Math.round(s)}<small> / 100</small>`;
   const band = s >= 65 ? ["good", "Strong prospects"] : s >= 40 ? ["mid", "Middle of the pack"] : ["low", "Weaker prospects"];
   $("band").className = "band " + band[0]; $("band").textContent = band[1];
-  $("meta").textContent = `Occupation: ${r.occupation || "not recognised, using overall averages"}${p.occupation ? " (your choice)" : ""} · ` +
+  $("meta").textContent = `Occupation: ${r.occupation || "not recognised, using overall averages"} · ` +
     (r.company_matched ? `Matched Glassdoor company: ${r.company_matched}` : (p.company ? "Company not found in reviews, using occupation averages" : "No company entered"));
   $("co-hint").textContent = p.company ? (r.company_matched ? `✓ ${r.company_matched} found in reviews` : "Not found, occupation average used") : " ";
   $("comps").innerHTML = MODEL.components.map(([k]) => {
@@ -324,25 +311,11 @@ function update() {
 }
 let t; FIELDS.concat(["pay_unit"]).forEach(f => $(f).addEventListener("input", () => { clearTimeout(t); t = setTimeout(update, 150); }));
 
-// saved list (this browser only)
-const KEY = "growth-calc-saved";
-let saved = []; try { saved = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { saved = []; }
-function persist() { try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} }
-function drawSaved() {
-  if (!saved.length) { $("saved").innerHTML = `<tr><td class="empty">Nothing saved yet. Score a posting and press "Save to my list".</td></tr>`; return; }
-  const ks = MODEL.components.map(c => c[0]);
-  $("saved").innerHTML = `<tr><th>Job</th><th>Company</th><th>Score</th>${ks.map(k => `<th>${LABEL[k].replace(" rate", "").replace(" likelihood", "")}</th>`).join("")}<th></th></tr>` +
-    saved.map((s, i) => [s, G.score(s.p, W)]).sort((a, b) => b[1].growth_score - a[1].growth_score).map(([s, r]) =>
-      `<tr><td>${esc(s.p.job_title)}</td><td>${esc(s.p.company || "–")}</td><td><b>${Math.round(r.growth_score)}</b></td>${ks.map(k => `<td>${Math.round(r.percentiles[k] * 100)}</td>`).join("")}<td><button type="button" data-id="${s.id}">Remove</button></td></tr>`).join("");
-}
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-$("saved").addEventListener("click", e => { const id = e.target.dataset.id; if (!id) return; saved = saved.filter(s => s.id !== id); persist(); drawSaved(); });
-$("form").addEventListener("submit", e => { e.preventDefault(); const p = read(); if (!p.job_title) return; saved.push({id: String(Date.now()), p}); persist(); drawSaved(); });
+$("form").addEventListener("submit", e => e.preventDefault());
 const EMPTY = {state: "Other/Remote", job_type: "unknown"};
 $("clear").addEventListener("click", () => { fill(EMPTY); setStatus("", "Paste the posting text, then press \"Fill the fields from this text\", or type the details in."); update(); $("job_title").focus(); });
-MODEL.components.forEach(([k]) => $("w-" + k).addEventListener("input", drawSaved));
 
-fill(EMPTY); update(); drawSaved();
+fill(EMPTY); update();
 
 // ---------------------------------------------------------------- fill the fields from pasted posting text
 const STATE_NAMES = {alabama:"AL",alaska:"AK",arizona:"AZ",arkansas:"AR",california:"CA",colorado:"CO",connecticut:"CT",delaware:"DE",florida:"FL",georgia:"GA",hawaii:"HI",idaho:"ID",illinois:"IL",indiana:"IN",iowa:"IA",kansas:"KS",kentucky:"KY",louisiana:"LA",maine:"ME",maryland:"MD",massachusetts:"MA",michigan:"MI",minnesota:"MN",mississippi:"MS",missouri:"MO",montana:"MT",nebraska:"NE",nevada:"NV","new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY","north carolina":"NC","north dakota":"ND",ohio:"OH",oklahoma:"OK",oregon:"OR",pennsylvania:"PA","rhode island":"RI","south carolina":"SC","south dakota":"SD",tennessee:"TN",texas:"TX",utah:"UT",vermont:"VT",virginia:"VA",washington:"WA","west virginia":"WV",wisconsin:"WI",wyoming:"WY","district of columbia":"DC"};
@@ -424,7 +397,6 @@ function applyFields(f, description) {
   $("job_type").value = f.job_type || "unknown";
   $("salary").value = f.salary || ""; $("pay_unit").value = "1";
   if (description !== undefined) $("description").value = description;
-  $("occupation").value = "";
   update();
 }
 async function fromText() {
