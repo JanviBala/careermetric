@@ -11,7 +11,8 @@ Which jobs give workers growth in their career?
 **Findings:** yes. Occupations that typically need no degree make up about a third of job postings but average a growth score of ~34/100, versus ~60 for degree jobs. They pay less, show more burnout and offer fewer promotions.
 The share of hourly postings is the strongest warning sign (Spearman ρ ≈ −0.74 with the growth score).
 
-**Solution: Growth Score**
+**Solution:**
+**Growth Score**
 On a scale of 0 to 100 evaluate the potential career growth a job offers using the average of 7 different metrics:
 - Salary 
 - Culture and Diversity ratings 
